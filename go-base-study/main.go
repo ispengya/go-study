@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"sort"
@@ -129,9 +130,110 @@ func mapDemo5() {
 	}
 }
 
+// 函数
+func fun01(x int, y int) int {
+	return x + y
+}
+func fun02(x, y int) int {
+	return x * y
+}
+func fun03() {
+	type calculation func(int, int) int
+	var c calculation               // 声明一个calculation类型的变量c
+	c = add                         // 把add赋值给c
+	fmt.Printf("type of c:%T\n", c) // type of c:main.calculation
+	fmt.Println(c(1, 2))            // 像调用add一样调用c
+
+	f := add                        // 将函数add赋值给变量f
+	fmt.Printf("type of f:%T\n", f) // type of f:func(int, int) int
+	fmt.Println(f(10, 20))
+}
+func fun04(x, y int) (string, int) {
+	return fmt.Sprintf("%d", x), y
+}
+func fun05(x, y int, op func(int, int) int) int {
+	return op(x, y)
+}
+func fun06(s string) (func(int, int) int, error) {
+	switch s {
+	case "+":
+		return add, nil
+	case "-":
+		return sub, nil
+	default:
+		err := errors.New("无法识别的操作符")
+		return nil, err
+	}
+}
+func fun07() {
+	// 将匿名函数保存到变量
+	add := func(x, y int) {
+		fmt.Println(x + y)
+	}
+	add(10, 20) // 通过变量调用匿名函数
+
+	//自执行函数：匿名函数定义完加()直接执行
+	func(x, y int) {
+		fmt.Println(x + y)
+	}(10, 20)
+}
+
+func add(x, y int) int {
+	return x + y
+}
+func sub(x, y int) int {
+	return x - y
+}
+
+func f1() int {
+	x := 5
+	defer func() {
+		x++
+	}()
+	return x //return x 的含义是将当前 x 的值（即 5）作为返回值保存。此时返回值已经确定为 5。
+}
+
+func f2() (x int) {
+	defer func() {
+		x++
+	}()
+	return 5 //在返回前，还会进行赋值x，函数有一个 命名返回值 x，其初始值为 0，return 5 表示将 5 赋值给命名返回值 x，此时 x = 5。执行 x++ 后，x 的值从 5 增加到 6
+}
+
+func f3() (y int) {
+	x := 5
+	defer func() {
+		x++
+	}()
+	return x //x已经赋值给y
+}
+
+func f4() (x int) {
+	defer func(x int) {
+		x++ //修改的是传递给匿名函数的副本 x，而非外层的命名返回值 x
+	}(x) // 此时传递的 x 是命名返回值 x 的当前值，即初始值 0
+	return 5
+}
+
 func main() {
 	//arrayDemo()
 	//sliceDemo()
 	//mapDemo4()
-	mapDemo5()
+	//mapDemo5()
+	//fun03()
+	//s, i := fun04(1, 2)
+	//fmt.Printf("type:%T value:%v\n", s, s)
+	//fmt.Println(s)
+	//fmt.Println(i)
+	//println(fun05(1, 2, add))
+	//f, err := fun06("-")
+	//if err != nil {
+	//	println(err.Error())
+	//}
+	//println(f(1, 2))
+	//fun07()
+	fmt.Println(f1())
+	fmt.Println(f2())
+	//fmt.Println(f3())
+	//fmt.Println(f4())
 }
