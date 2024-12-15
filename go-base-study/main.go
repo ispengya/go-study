@@ -178,6 +178,29 @@ func fun07() {
 	}(10, 20)
 }
 
+//func fun08() {
+//	var p1 person
+//	p1.name = "沙河娜扎"
+//	p1.city = "北京"
+//	p1.age = 18
+//	fmt.Printf("p1=%v\n", p1)  //p1={沙河娜扎 北京 18}
+//	fmt.Printf("p1=%#v\n", p1) //p1=main.person{name:"沙河娜扎", city:"北京", age:18}
+//
+//	//匿名结构体
+//	var user struct {
+//		Name string
+//		Age  int
+//	}
+//	user.Name = "小王子"
+//	user.Age = 18
+//	fmt.Printf("%#v\n", user)
+//
+//	//new得到结构体指针
+//	var p2 = new(person)
+//	fmt.Printf("%T\n", p2)     //*main.person
+//	fmt.Printf("p2=%#v\n", p2) //p2=&main.person{name:"", city:"", age:0}
+//}
+
 func add(x, y int) int {
 	return x + y
 }
@@ -192,14 +215,12 @@ func f1() int {
 	}()
 	return x //return x 的含义是将当前 x 的值（即 5）作为返回值保存。此时返回值已经确定为 5。
 }
-
 func f2() (x int) {
 	defer func() {
 		x++
 	}()
 	return 5 //在返回前，还会进行赋值x，函数有一个 命名返回值 x，其初始值为 0，return 5 表示将 5 赋值给命名返回值 x，此时 x = 5。执行 x++ 后，x 的值从 5 增加到 6
 }
-
 func f3() (y int) {
 	x := 5
 	defer func() {
@@ -207,7 +228,6 @@ func f3() (y int) {
 	}()
 	return x //x已经赋值给y
 }
-
 func f4() (x int) {
 	defer func(x int) {
 		x++ //修改的是传递给匿名函数的副本 x，而非外层的命名返回值 x
@@ -215,7 +235,34 @@ func f4() (x int) {
 	return 5
 }
 
+type Person struct {
+	name   string
+	age    int8
+	dreams []string
+}
+
+func (p *Person) SetDreams(dreams []string) {
+	p.dreams = dreams
+}
+
+func (p *Person) SetDreams1(dreams []string) {
+	p.dreams = make([]string, len(dreams))
+	copy(p.dreams, dreams)
+}
+
+type student struct {
+	name string
+	age  int
+}
+
 func main() {
+	p1 := Person{name: "小王子", age: 18}
+	data := []string{"吃饭", "睡觉", "打豆豆"}
+	p1.SetDreams1(data)
+
+	// 你真的想要修改 p1.dreams 吗？
+	data[1] = "不睡觉"
+	fmt.Println(p1.dreams) // ?
 	//arrayDemo()
 	//sliceDemo()
 	//mapDemo4()
@@ -232,8 +279,23 @@ func main() {
 	//}
 	//println(f(1, 2))
 	//fun07()
-	fmt.Println(f1())
-	fmt.Println(f2())
+	//fmt.Println(f1())
+	//fmt.Println(f2())
 	//fmt.Println(f3())
 	//fmt.Println(f4())
+	//panic("panic in B")
+	//fun08()
+	//m := make(map[string]*student)
+	//stus := []student{
+	//	{name: "小王子", age: 18},
+	//	{name: "娜扎", age: 23},
+	//	{name: "大王八", age: 9000},
+	//}
+	//
+	//for _, stu := range stus {
+	//	m[stu.name] = &stu
+	//}
+	//for k, v := range m {
+	//	fmt.Println(k, "=>", v.name)
+	//}
 }
